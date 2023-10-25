@@ -10,7 +10,6 @@ public class App {
     public static void main( String[] args ) {
 
         System.out.println("");
-
         //Server
 
         try {
@@ -19,50 +18,21 @@ public class App {
             System.out.println("");
 
             ServerSocket server = new ServerSocket(3000);
-            Socket s = server.accept();
+            
+            do {
 
-            System.out.println("un client si è collegato");
-            System.out.println("");
+                Socket client = server.accept();
+                MioThread m = new MioThread(client);
+                m.start();
 
-            int randomNum = (int)(Math.random() * 101);
-            System.out.println("Numero da indovinare: " + randomNum);
+            }while(true);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            DataOutputStream out = new DataOutputStream(s.getOutputStream());
+        } 
+        
+        catch(Exception e) {
 
-            String numRicevuto = "";
-            int count = 0;
-
-            do{
-
-                numRicevuto = in.readLine();
-                System.out.println("Numero ricevuto: " + numRicevuto);
-
-                count++;
-                System.out.println("Contatore: " + count);
-
-                if(Integer.parseInt(numRicevuto) > randomNum)
-                    out.writeBytes( "2" + '\n');
-
-                else if(Integer.parseInt(numRicevuto) < randomNum)
-                    out.writeBytes( "1" + '\n');
-
-                else if(Integer.parseInt(numRicevuto) == randomNum) {
-                    out.writeBytes( "3" + '\n');
-                    out.writeBytes( Integer.toString(count) + '\n');
-                }
-
-                System.out.println("");
-
-            }while(randomNum != Integer.parseInt(numRicevuto));
-
-            s.close();
-            server.close();
-
-
-        } catch(Exception e) {
-
-
+            System.out.println(e.getMessage());
+            System.out.println( "Errore durante l'istanza del Server!" );
         }
 
     }
